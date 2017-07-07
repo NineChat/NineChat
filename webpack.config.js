@@ -26,10 +26,11 @@ module.exports = {
         query: {
           presets: ['es2015', 'react']
         },
+        include: __dirname,
       },
       {
         test: /(\.css|.scss)$/,
-        loaders: ['style-loader', 'css-loader']
+        loaders: ['style-loader', 'css-loader', 'sass-loader'],
       },
     ]
   },
