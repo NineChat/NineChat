@@ -32,14 +32,9 @@ wss.on('connection', function connection(ws, req) {
   let userid = req.headers.userid ? req.headers.userid : "Garret"
   connectList[id] = {id: id, ws: ws}
   let content = 'connect_id: ' + id.toString()
-  // ws.send(msgConstructor("wsConfirmed", content))
-  console.log(msgConstructor("wsConfirmed", content))
   chatCtrl.getLastTen(userid, (err, messages)=>{
-    console.log('result', messages)
     sendToAll(JSON.stringify(messages))
   })
-  // http://mongoosejs.com/docs/queries.html
-  // Room.find({}, null, {sort: '-date'}, function(err, docs) { ... });
   const sendToAll = data => {
     Object.keys(connectList).forEach(id =>{
       connectList[id].ws.send(data)
@@ -47,7 +42,6 @@ wss.on('connection', function connection(ws, req) {
   }
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
-    // sendToAll(data)
     chatCtrl.addMsg(data, (err, savedMsg)=>{
       sendToAll(JSON.stringify(savedMsg))
     })

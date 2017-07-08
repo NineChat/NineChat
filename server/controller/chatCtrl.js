@@ -70,7 +70,6 @@ const chatCtrl = {
       find({}).
       sort({timestamp: -1}).
       limit(10).
-      // sort({timestamp: -1}).
       exec((err, result)=>{
         console.log('err', err)
         return callback(err, result)
