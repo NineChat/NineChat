@@ -61,12 +61,18 @@ wss.on('connection', function connection(ws, req) {
   // You might use location.query.access_token to authenticate or share sessions 
   // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312) 
  
+  const sendAll = data => {
+    Object.keys(connectList).forEach(id =>{
+      connectList[id].ws.send(data)
+    })
+  }
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
     
     let msg = JSON.parse(data)
     let modifiedMsg = 'msg from server: ' + data
-    ws.send(msgConstructor("message", modifiedMsg))
+    // ws.send(msgConstructor("message", modifiedMsg))
+    sendAll(data)
     // connectList[0].ws.send(msgConstructor('message', 'private'))
     let msgDoc = new Message({
       src: 'Jeff',
