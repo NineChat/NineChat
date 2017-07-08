@@ -1,19 +1,20 @@
 import React, { Component } from 'react';
 
 function Chatbox(props){
-  const msgs = props.messages.map((message, i) =>{
+  if (props.messages.length > 0) {
+    const msgs = props.messages.map((message, i) =>{
+      return (
+        <div key = {message._id} className = "msgcontainer">
+          <div className = "msgname">{message.src}:</div>
+          <div className = "msg">{message.message}</div>
+        </div>
+      )
+    });
     return (
-      <div key = {message.id} className = "msgcontainer">
-        <div className = "msgname">{message.src}:</div>
-        <div className = "msg">{message.message}</div>
-      </div>
+        {msgs}
     )
-  });
-  return (
-    <div id ="chatbox">
-      {msgs}
-    </div>
-  )
+  }
+  return null;
 }
 
 export default Chatbox;

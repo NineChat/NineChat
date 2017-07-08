@@ -10,38 +10,30 @@ import UserProfile from './user-profile.jsx';
 // // onmessage: recieve new message from server
 // // send : send message to server.
 
-
-
-
-
+let socket = new WebSocket('ws://ec2-34-212-61-95.us-west-2.compute.amazonaws.com:3000/');
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = this.getInitialState()
   }
-
   componentDidMount(){
     // before executing the set state below, componentDidMount needs to reach out to
     // server via our websocket and pull down the list of messages between user and user[0].
-
-
-    let socket = new WebSocket('ws://ec2-34-212-61-95.us-west-2.compute.amazonaws.com:3000/');
-    socket.onopen = function(event){
-      console.log("test", event);
-      socket.onmessage = function(event){
+    return socket.onopen = (event) =>{
+      console.log("test2", event);
+      const currchat = this.state.friendsList[0];
+      socket.onmessage = (event) =>{
         console.log("messages", JSON.parse(event.data));
         let msgs = JSON.parse(event.data);
+        let oldmsgs = this.state.messages.slice();
+        msgs = oldmsgs.concat(msgs);
         this.setState({
+          currentChat: currchat,
           messages: msgs
         });
       }
     }
-
-    const currchat = this.state.friendsList[0];
-    this.setState({
-      currentChat: currchat
-    });
   }
 
   updateMessages(newMessages) {
@@ -54,12 +46,14 @@ class App extends Component {
   getInitialState() {
     //return data from socket.onconnect here, with the return statement below inside the callback for that. this will hold off on populating ANYTHING until that data comes through.
     //connect ajax to this?
-    return {
-      messages: [{id: 'testid' , src: 'testUSER' , dst: 'testRECIEVER' , message: 'I LOVE ME SOME EGGS'},{id: 'testid2' , src: 'testUSER2' , dst: 'testRECIEVER2' , message: 'BUT REALLY HATE TOAST BROOO'}],
-      friendsList: [{username: 'Janelle69', name: 'Janelle', photo: 'test'},{username: 'Jeffrey69', name:'Heffe', photo: 'test.jpg'}, {username: 'Garrett69', name:'Garrett', photo: 'test.jpg'} ],
-      currentChat: {username: '', name:'', photo: ''},
-      text: 'test'
-    }
+      return {
+        messages: [],
+        friendsList: [{username: 'Janelle69', name: 'Janelle', photo: 'test'},{username: 'Jeffrey69', name:'Heffe', photo: 'test.jpg'}],
+        currentChat: {username: '', name:'', photo: ''},
+        text: 'test',
+        me: {username: 'Garrett69', name:'Garrett', photo: 'test.jpg'}
+      }
+
   }
 
   sendClick(event) {
@@ -68,14 +62,18 @@ class App extends Component {
       // client pushes it to messages array (SETS STATE)
       // react rerenders
       //textbox value is reset to null
-      socket.send(this.state.text);
-      this.setState({
-        text: ''
-      });
+      let aMessage = {
+        src: this.state.me.username,
+        dst: this.state.currentChat.username,
+        message: this.state.text,
+      }
+      socket.send(JSON.stringify(aMessage));
+      this.setState({text: ''});
   }
 
   userClick(user) {
     // update messages to reflect current user, this will require a pull from server
+    // to server: send my ID, friendsID, should recieve back messages between me and friend, update state.messages to reflect the new messages.
     const chatter = this.state.friendsList[user];
     this.setState({
       currentChat : chatter
@@ -93,25 +91,22 @@ class App extends Component {
           <div id = "main">
             <div id = "chat">
               <Topbar/>
-              <Chatbox messages = {this.state.messages}/>
+              <div id ="chatbox">
+                <Chatbox messages = {this.state.messages}/>
+              </div>
+
               <Bottombar  handleChange = {(event)=>this.handleChange(event)} sendClick = {()=> this.sendClick()} value = {this.state.text}/>
             </div>
 
             <div id = "users">
-
               <UserProfile currentChat = {this.state.currentChat} />
-
-            <h3>Friends</h3>
-
+              <h3>Friends</h3>
               <div className='user-list'>
-
                 <ul>
                   {list}
                 </ul>
-
               </div>
             </div>
-
           </div>
           )
   }
