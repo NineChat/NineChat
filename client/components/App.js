@@ -6,11 +6,7 @@ import Bottombar from './bottombar';
 import Userlist from './user-list.jsx';
 import UserProfile from './user-profile.jsx';
 
-// // onopen : recieve all messages from server
-// // onmessage: recieve new message from server
-// // send : send message to server.
-
-let socket = new WebSocket('ws://ec2-34-212-61-95.us-west-2.compute.amazonaws.com:3000/');
+const socket = new WebSocket('ws://ec2-34-212-61-95.us-west-2.compute.amazonaws.com:3000/');
 
 class App extends Component {
   constructor(props) {
@@ -20,27 +16,25 @@ class App extends Component {
   componentDidMount(){
     // before executing the set state below, componentDidMount needs to reach out to
     // server via our websocket and pull down the list of messages between user and user[0].
+    console.log('did mount');
     return socket.onopen = (event) =>{
-      console.log("test2", event);
+      return this.updateMessages();
+    }
+  }
+
+  updateMessages() {
       const currchat = this.state.friendsList[0];
       socket.onmessage = (event) =>{
-        console.log("messages", JSON.parse(event.data));
+        console.log(event);
         let msgs = JSON.parse(event.data);
-        let oldmsgs = this.state.messages.slice();
+        msgs = Array.isArray(msgs) ? msgs.reverse() : msgs;
+        const oldmsgs = this.state.messages.slice();
         msgs = oldmsgs.concat(msgs);
         this.setState({
           currentChat: currchat,
           messages: msgs
         });
       }
-    }
-  }
-
-  updateMessages(newMessages) {
-    this.setState({messages: newMessages});
-    this.sendClick = this.sendClick.bind(this);
-    //this.handleChange = this.handleChange.bind(this);
-
   }
 
   getInitialState() {
@@ -48,10 +42,10 @@ class App extends Component {
     //connect ajax to this?
       return {
         messages: [],
-        friendsList: [{username: 'Janelle69', name: 'Janelle', photo: 'test'},{username: 'Jeffrey69', name:'Heffe', photo: 'test.jpg'}],
+        friendsList: [{username: 'JanelleCS', name: 'Janelle', photo: 'test'},{username: 'JeffreyCS', name:'Heffe', photo: 'test.jpg'}],
         currentChat: {username: '', name:'', photo: ''},
-        text: 'test',
-        me: {username: 'Garrett69', name:'Garrett', photo: 'test.jpg'}
+        text: '',
+        me: {username: 'GarrettCS', name:'Garrett', photo: 'test.jpg'}
       }
 
   }
@@ -65,10 +59,22 @@ class App extends Component {
       let aMessage = {
         src: this.state.me.username,
         dst: this.state.currentChat.username,
-        message: this.state.text,
+        content: this.state.text,
       }
       socket.send(JSON.stringify(aMessage));
       this.setState({text: ''});
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'Enter'){
+          let aMessage = {
+            src: this.state.me.username,
+            dst: this.state.currentChat.username,
+            content: this.state.text,
+          }
+          socket.send(JSON.stringify(aMessage));
+          this.setState({text: ''});
+    }
   }
 
   userClick(user) {
@@ -79,6 +85,7 @@ class App extends Component {
       currentChat : chatter
     });
   }
+
   handleChange(event){
     this.setState({text: event.target.value});
   }
@@ -91,11 +98,11 @@ class App extends Component {
           <div id = "main">
             <div id = "chat">
               <Topbar/>
-              <div id ="chatbox">
-                <Chatbox messages = {this.state.messages}/>
-              </div>
 
-              <Bottombar  handleChange = {(event)=>this.handleChange(event)} sendClick = {()=> this.sendClick()} value = {this.state.text}/>
+                <Chatbox messages = {this.state.messages}/>
+
+
+              <Bottombar handleChange = {(event)=>this.handleChange(event)} sendClick = {()=> this.sendClick()} handleKeyPress={(event)=>this.handleKeyPress(event)} value = {this.state.text}/>
             </div>
 
             <div id = "users">

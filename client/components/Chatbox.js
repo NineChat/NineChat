@@ -11,10 +11,17 @@ function Chatbox(props){
       )
     });
     return (
+      <div id ="chatbox">
         {msgs}
+      </div>
     )
   }
-  return null;
+  const msgs = null;
+  return (
+    <div id ="chatbox">
+      {msgs}
+    </div>
+  )
 }
 
 export default Chatbox;
