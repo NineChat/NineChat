@@ -4,6 +4,8 @@ const http = require('http');
 const url = require('url');
 const WebSocket = require('ws');
 const bodyParser = require('body-parser');
+let Message = require('./model/message.js')
+const chatCtrl = require('./controller/chatCtrl')
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -37,8 +39,8 @@ const messagePost = (req, res, next)=>{
   next()
 }
 port = process.env.PORT || 3000
-app.get('/', messageGet);
-app.get('/messages', messageGet);
+app.get('/', chatCtrl.get);
+app.get('/messages', chatCtrl.get);
 app.post('/', messagePost);
 app.post('/messages', messagePost);
 
@@ -62,9 +64,18 @@ wss.on('connection', function connection(ws, req) {
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
     
+    let msg = JSON.parse(data)
     let modifiedMsg = 'msg from server: ' + data
     ws.send(msgConstructor("message", modifiedMsg))
-    connectList[0].ws.send(msgConstructor('message', 'private'))
+    // connectList[0].ws.send(msgConstructor('message', 'private'))
+    let msgDoc = new Message({
+      src: 'Jeff',
+      dst: 'Gar',
+      message: msg.content})
+    msgDoc.save((err, doc)=>{
+      if (err) return console.error(err)
+      console.log('doc saved:', doc)
+    })
   });
   ws.on('close', ()=>{
     delete connectList[id]
