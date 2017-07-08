@@ -1,5 +1,8 @@
 var express = require('express');
 var app = express();
+const http = require('http');
+const url = require('url');
+const WebSocket = require('ws');
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,6 +41,38 @@ app.get('/', messageGet);
 app.get('/messages', messageGet);
 app.post('/', messagePost);
 app.post('/messages', messagePost);
-app.listen(port)
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server: server, clientTracking: true });
+let connectList = {}
+ 
+const msgConstructor = (type, content) =>{
+  return JSON.stringify({type: type, content: content})
+}
+
+wss.on('connection', function connection(ws, req) {
+  let id = Object.keys(connectList).length
+  connectList[id] = {id: id, ws: ws}
+  let content = 'connect_id: ' + id.toString()
+  ws.send(msgConstructor("wsConfirmed", content))
+  const location = url.parse(req.url, true);
+  // You might use location.query.access_token to authenticate or share sessions 
+  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312) 
+ 
+  ws.on('message', function incoming(data) {
+    console.log('received: %s', data);
+    
+    let modifiedMsg = 'msg from server: ' + data
+    ws.send(msgConstructor("message", modifiedMsg))
+    connectList[0].ws.send(msgConstructor('message', 'private'))
+  });
+  ws.on('close', ()=>{
+    delete connectList[id]
+    console.log('closed %s', id)
+  })
+});
+
+// app.listen(port)
+server.listen(3000)
 
 console.log('server port: ', port)
