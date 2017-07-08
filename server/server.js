@@ -32,14 +32,16 @@ const msgConstructor = (type, content) =>{
 
 const sendToAll = data => {
   Object.keys(connectList).forEach(id =>{
-    connectList[id].ws.send(data)
+    connectList.id.ws.send(data)
   })
 }
 const findConnections = username =>{
-  // for 
-  
-
-  // return ws 
+  for (key in connectList) {
+    if (connectList.key.username === username){
+      return connectList.key.ws
+    }
+  }
+  return undefined 
 }
 wss.on('connection', function connection(ws, req) {
 console.log()
@@ -47,13 +49,13 @@ console.log()
 console.log('req: ', req)
 console.log()
 console.log()
-  console.log('req_userid:', req.headers.userid)
   console.log('req_headers:', req.headers)
 console.log()
   let id = Object.keys(connectList).length
-  let userid = req.headers.userid ? req.headers.userid : "Garret"
-  connectList[id] = {id: id, ws: ws}
-  chatCtrl.getLastTen(userid, (err, messages)=>{
+  let username = req.headers.username ? req.headers.username : "Garret"
+  connectList[id] = {id: id, ws: ws, username: username}
+
+  chatCtrl.getLastTen(username, (err, messages)=>{
     ws.send(JSON.stringify(messages))
   })
   ws.on('message', function incoming(data) {
