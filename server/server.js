@@ -34,9 +34,9 @@ wss.on('connection', function connection(ws, req) {
 
   chatCtrl.getMsg({}, (err, messages)=>{
     console.log('result', messages)
-    messages.forEach( message =>{
-      sendToAll(JSON.stringify(message))
-    })
+    // messages.forEach( message =>{
+    sendToAll(JSON.stringify(messages))
+    // })
   })
   const sendToAll = data => {
     Object.keys(connectList).forEach(id =>{
@@ -72,3 +72,4 @@ wss.on('connection', function connection(ws, req) {
 server.listen(3000)
 
 console.log('server port: ', port)
+
