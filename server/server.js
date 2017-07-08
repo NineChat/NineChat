@@ -47,8 +47,10 @@ wss.on('connection', function connection(ws, req) {
   }
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
-    sendToAll(data)
-    chatCtrl.addMsg(data)
+    // sendToAll(data)
+    chatCtrl.addMsg(data, (err, savedMsg)=>{
+      sendToAll(savedMsg)
+    })
   });
   ws.on('close', ()=>{
     delete connectList[id]

@@ -22,7 +22,7 @@ const chatCtrl = {
       next()
     })
   },
-  addMsg(data) {
+  addMsg(data, callback) {
     try {
       msg = JSON.parse(data)
       if ('src' in msg &&
@@ -42,9 +42,10 @@ const chatCtrl = {
       })
       console.log(err)
     }
-    msgDoc.save((err, doc)=>{
+    msgDoc.save((err, savedMsg)=>{
       if (err) return console.error(err)
-      console.log('doc saved:', doc)
+      console.log('doc saved:', savedMsg)
+      callback(savedMsg)
     })
   },
   getUser(req, res, next){
