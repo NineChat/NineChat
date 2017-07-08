@@ -68,9 +68,11 @@ const chatCtrl = {
   getLastTen(userid, callback){
     Message.
       find({}).
+      sort({timestamp: -1}).
       limit(10).
-      sort('-date').
+      // sort({timestamp: -1}).
       exec((err, result)=>{
+        console.log('err', err)
         return callback(err, result)
     })
   },
