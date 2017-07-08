@@ -45,7 +45,7 @@ const chatCtrl = {
     msgDoc.save((err, savedMsg)=>{
       if (err) return console.error(err)
       console.log('doc saved:', savedMsg)
-      callback(savedMsg)
+      callback(err, savedMsg)
     })
   },
   getUser(req, res, next){

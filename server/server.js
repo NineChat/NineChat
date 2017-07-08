@@ -49,7 +49,7 @@ wss.on('connection', function connection(ws, req) {
     console.log('received: %s', data);
     // sendToAll(data)
     chatCtrl.addMsg(data, (err, savedMsg)=>{
-      sendToAll(savedMsg)
+      sendToAll(JSON.stringify(savedMsg))
     })
   });
   ws.on('close', ()=>{
