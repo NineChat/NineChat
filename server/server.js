@@ -34,9 +34,7 @@ wss.on('connection', function connection(ws, req) {
 
   chatCtrl.getMsg({}, (err, messages)=>{
     console.log('result', messages)
-    // messages.forEach( message =>{
     sendToAll(JSON.stringify(messages))
-    // })
   })
   const sendToAll = data => {
     Object.keys(connectList).forEach(id =>{
@@ -45,12 +43,10 @@ wss.on('connection', function connection(ws, req) {
   }
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
-    
     // let msg = JSON.parse(data)
     let modifiedMsg = 'msg from server: ' + data
     // ws.send(msgConstructor("message", modifiedMsg))
     sendToAll(data)
-    // connectList[0].ws.send(msgConstructor('message', 'private'))
     let msgDoc = new Message({
       src: 'Jeff',
       dst: 'Gar',
@@ -59,7 +55,6 @@ wss.on('connection', function connection(ws, req) {
       msgDoc.save((err, doc)=>{
       if (err) return console.error(err)
       console.log('doc saved:', doc)
-      // chatCtrl.getMsg({}, (err, result)=>{sendToAll(result)})
     })
   });
   ws.on('close', ()=>{

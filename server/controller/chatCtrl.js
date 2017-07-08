@@ -1,9 +1,6 @@
 const Message = require('../model/message');
 
 const chatCtrl = {
-  // Create a new student in the Database
-  // Their information will be sent in the request body
-  // This should send the created student
   addMsg(req, res) {
     console.log('create', req.body)
     let msgDoc = new Message({
@@ -21,10 +18,6 @@ const chatCtrl = {
       }
     })
   },
-
-  // Get a student from the database and send it in the response
-  // Their first name will be in the request parameter 'name'
-  // This should send the found student
   getMsg(query, callback ) {
     Message.find({}, (err, result)=>{
       return callback(err, result)
