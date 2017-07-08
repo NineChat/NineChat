@@ -16,6 +16,7 @@ class App extends Component {
   componentDidMount(){
     // before executing the set state below, componentDidMount needs to reach out to
     // server via our websocket and pull down the list of messages between user and user[0].
+
     console.log('did mount');
     return socket.onopen = (event) =>{
       return this.updateMessages();
@@ -30,6 +31,8 @@ class App extends Component {
         msgs = Array.isArray(msgs) ? msgs.reverse() : msgs;
         const oldmsgs = this.state.messages.slice();
         msgs = oldmsgs.concat(msgs);
+        document.cookie = "username=" + this.state.me.username;
+        document.cookie = "chatBro=" + currchat.username;
         this.setState({
           currentChat: currchat,
           messages: msgs
@@ -81,6 +84,7 @@ class App extends Component {
     // update messages to reflect current user, this will require a pull from server
     // to server: send my ID, friendsID, should recieve back messages between me and friend, update state.messages to reflect the new messages.
     const chatter = this.state.friendsList[user];
+    document.cookie = "chatBro=" + chatter.username;
     this.setState({
       currentChat : chatter
     });
