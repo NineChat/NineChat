@@ -18,6 +18,7 @@ app.get('/messages', chatCtrl.get);
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server: server, clientTracking: true });
 let connectList = {}
+let chatList = {}
  
 const msgConstructor = (type, content) =>{
   return JSON.stringify({type: type, content: content})
@@ -47,15 +48,7 @@ wss.on('connection', function connection(ws, req) {
     let modifiedMsg = 'msg from server: ' + data
     // ws.send(msgConstructor("message", modifiedMsg))
     sendToAll(data)
-    let msgDoc = new Message({
-      src: 'Jeff',
-      dst: 'Gar',
-      // message: msg.content})
-      message: data})
-      msgDoc.save((err, doc)=>{
-      if (err) return console.error(err)
-      console.log('doc saved:', doc)
-    })
+    chatCtrl.addMsg(data)
   });
   ws.on('close', ()=>{
     delete connectList[id]

@@ -1,21 +1,28 @@
 const Message = require('../model/message');
+// const messageSchema = require('../model/message');
+const User = require('../model/users');
 
 const chatCtrl = {
-  addMsg(req, res) {
-    console.log('create', req.body)
-    let msgDoc = new Message({
-      src: 'Jeff',
-      dst: 'Gar',
-      message: msg.content})
+  addMsg(data) {
+    let msgDoc
+    try {
+      msg = JSON.parse(data)
+      msgDoc = new Message({
+        src: msg.src,
+        dst: msg.dst,
+        message: msg.content
+      })
+    } catch (err) {
+      msgDoc = new Message({
+        src: "message_not",
+        dst: "json",
+        message: data
+      })
+      console.log(err)
+    }
     msgDoc.save((err, doc)=>{
-      if (err) {
-        res.status(418).send(err)
-        console.log(err)
-        next()
-      } else {
-        res.json(doc)
-        console.log('doc saved:', doc)
-      }
+      if (err) return console.error(err)
+      console.log('doc saved:', doc)
     })
   },
   getMsg(query, callback ) {
