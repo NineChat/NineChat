@@ -12,7 +12,11 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname +'./../'));
 
 port = process.env.PORT || 3000
-app.get('/', (req, res, next)=>{res.redirect('/messages'); next()});
+app.get('/', (req, res, next)=>{
+console.log()
+console.log('cookies from GET req', req.cookies)
+console.log()
+res.redirect('/messages'); next()});
 app.get('/users', chatCtrl.getUser);
 app.get('/messages', chatCtrl.get);
 app.post('/users', chatCtrl.addUser);
@@ -38,7 +42,14 @@ const findConnections = username =>{
   // return ws 
 }
 wss.on('connection', function connection(ws, req) {
-  console.log('req:', req.headers.userid)
+console.log()
+console.log()
+console.log('req: ', req)
+console.log()
+console.log()
+  console.log('req_userid:', req.headers.userid)
+  console.log('req_headers:', req.headers)
+console.log()
   let id = Object.keys(connectList).length
   let userid = req.headers.userid ? req.headers.userid : "Garret"
   connectList[id] = {id: id, ws: ws}
