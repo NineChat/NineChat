@@ -40,7 +40,7 @@ wss.on('connection', function connection(ws, req) {
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
     
-    let msg = JSON.parse(data)
+    //let msg = JSON.parse(data)
     let modifiedMsg = 'msg from server: ' + data
     // ws.send(msgConstructor("message", modifiedMsg))
     // sendToAll(data)
@@ -48,7 +48,7 @@ wss.on('connection', function connection(ws, req) {
     let msgDoc = new Message({
       src: 'Jeff',
       dst: 'Gar',
-      message: msg.content})
+      message: data})
     msgDoc.save((err, doc)=>{
       if (err) return console.error(err)
       console.log('doc saved:', doc)
