@@ -15,7 +15,8 @@ app.use(function(req, res, next) {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname +'./../'));
-
+app.get('/build/bundle.js', express.static(__dirname +'./../build/bundle.js'));
+app.get('/69.jpg', express.static(__dirname +'./../client/69.jpg'));
 port = process.env.PORT || 3000
 app.get('/', (req, res, next)=>{
 console.log()
@@ -41,7 +42,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server: server, clientTracking: true });
 let connectList = {}
 let chatList = {}
- 
+
 const msgConstructor = (type, content) =>{
   return JSON.stringify({type: type, content: content})
 }
@@ -57,7 +58,7 @@ const findConnections = username =>{
       return connectList.key.ws
     }
   }
-  return undefined 
+  return undefined
 }
 wss.on('connection', function connection(ws, req) {
   let id = Object.keys(connectList).length
@@ -83,4 +84,3 @@ wss.on('connection', function connection(ws, req) {
 server.listen(3000)
 
 console.log('server port: ', port)
-

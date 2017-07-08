@@ -39,6 +39,11 @@
   display: inline-block;
 }
 
+#sixtynine{
+  width: 75px;
+  height: 75px;
+}
+
 #bottombar{
   border: 1px solid black;
   display: flex;
