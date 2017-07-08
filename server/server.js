@@ -7,6 +7,11 @@ const bodyParser = require('body-parser');
 let Message = require('./model/message.js')
 const chatCtrl = require('./controller/chatCtrl')
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname +'./../'));
@@ -19,6 +24,17 @@ console.log()
 res.redirect('/messages'); next()});
 app.get('/users', chatCtrl.getUser);
 app.get('/messages', chatCtrl.get);
+app.get('/cookie', (req, res, next)=>{
+  console.log('GET route cookie')
+  res.cookie('cookie', 'hellooo')
+  res.end()
+})
+app.post('/cookie', (req, res, next)=>{
+  console.log('body:', req.body.username)
+  res.cookie('username', req.body.username )
+  res.end()
+  next()
+});
 app.post('/users', chatCtrl.addUser);
 
 const server = http.createServer(app);
@@ -32,7 +48,7 @@ const msgConstructor = (type, content) =>{
 
 const sendToAll = data => {
   Object.keys(connectList).forEach(id =>{
-    connectList.id.ws.send(data)
+    connectList[id].ws.send(data)
   })
 }
 const findConnections = username =>{
@@ -44,13 +60,6 @@ const findConnections = username =>{
   return undefined 
 }
 wss.on('connection', function connection(ws, req) {
-console.log()
-console.log()
-console.log('req: ', req)
-console.log()
-console.log()
-  console.log('req_headers:', req.headers)
-console.log()
   let id = Object.keys(connectList).length
   let username = req.headers.username ? req.headers.username : "Garret"
   connectList[id] = {id: id, ws: ws, username: username}
