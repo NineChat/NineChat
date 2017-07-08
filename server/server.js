@@ -31,7 +31,13 @@ wss.on('connection', function connection(ws, req) {
   const location = url.parse(req.url, true);
   // You might use location.query.access_token to authenticate or share sessions 
   // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312) 
- 
+
+  chatCtrl.getMsg({}, (err, messages)=>{
+    console.log('result', messages)
+    messages.forEach( message =>{
+      sendToAll(JSON.stringify(message))
+    })
+  })
   const sendToAll = data => {
     Object.keys(connectList).forEach(id =>{
       connectList[id].ws.send(data)
@@ -40,19 +46,20 @@ wss.on('connection', function connection(ws, req) {
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
     
-    //let msg = JSON.parse(data)
+    // let msg = JSON.parse(data)
     let modifiedMsg = 'msg from server: ' + data
     // ws.send(msgConstructor("message", modifiedMsg))
-    // sendToAll(data)
+    sendToAll(data)
     // connectList[0].ws.send(msgConstructor('message', 'private'))
     let msgDoc = new Message({
       src: 'Jeff',
       dst: 'Gar',
+      // message: msg.content})
       message: data})
-    msgDoc.save((err, doc)=>{
+      msgDoc.save((err, doc)=>{
       if (err) return console.error(err)
       console.log('doc saved:', doc)
-      chatCtrl.getMsg({}, (err, result)=>{sendToAll(result)})
+      // chatCtrl.getMsg({}, (err, result)=>{sendToAll(result)})
     })
   });
   ws.on('close', ()=>{
