@@ -1,8 +1,27 @@
 const Message = require('../model/message');
 // const messageSchema = require('../model/message');
 const User = require('../model/users');
+const bodyParser = require('body-parser')
 
 const chatCtrl = {
+  addUser(req, res, next){
+    console.log('body: ', req.body)
+    let username = req.body.username ? req.body.username : "Chris"
+    let user = new User({
+      username: username,
+      // convs: [{conv_id: Number}],
+      // fList: [{username: String}]
+    })
+    user.save((err, savedUser)=>{
+      if(err){
+        console.error(err)
+        res.json(err)
+      } else {
+        res.json(savedUser)
+      }
+      next()
+    })
+  },
   addMsg(data) {
     try {
       msg = JSON.parse(data)
@@ -28,7 +47,19 @@ const chatCtrl = {
       console.log('doc saved:', doc)
     })
   },
-  getMsg(query, callback ) {
+  getUser(req, res, next){
+    User.find({}, (err, result)=>{
+      if (err){
+        res.json(err)
+        console.log(err)
+        next()
+      } else {
+        res.json(result)
+        next()
+      }
+    })
+  },
+  getMsg(query, callback) {
     Message.find({}, (err, result)=>{
       return callback(err, result)
     })

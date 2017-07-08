@@ -12,8 +12,10 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname +'./../'));
 
 port = process.env.PORT || 3000
-app.get('/', chatCtrl.get);
+app.get('/', (req, res, next)=>{res.redirect('/messages'); next()});
+app.get('/users', chatCtrl.getUser);
 app.get('/messages', chatCtrl.get);
+app.post('/users', chatCtrl.addUser);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server: server, clientTracking: true });

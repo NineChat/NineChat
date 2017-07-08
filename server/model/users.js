@@ -5,12 +5,17 @@ mongoose.connection.once('open', () => {
   console.log('Connected with MongoDB ORM - mongodb-orm');
 });
 
-// place Schemas here
+let usersSchema = mongoose.Schema({
+    // user_id: String,
+    username: {
+      type: String,
+      unique : true,
+      required : true,
+      dropDups: true
+    },
+    convs: [{conv_id: Number}],
+    fList: [{username: String}]
+});
 
-
-
-
-
-module.exports = function(data) {
-  //place code here
-};
+users = mongoose.model('Users', usersSchema)
+module.exports = users
