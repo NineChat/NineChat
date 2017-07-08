@@ -8,7 +8,8 @@ mongoose.connection.once('open', () => {
 let messagesSchema = mongoose.Schema({
     src: String,
     dst: String,
-    message: String
+    message: String,
+    timestamp: { type: Date, default: Date.now }
 });
 
 messages = mongoose.model('Messages', messagesSchema)

@@ -30,6 +30,15 @@ const chatCtrl = {
       return callback(err, result)
     })
   },
+  getLastTen(callback){
+    Message.
+      find({}).
+      limit(10).
+      sort('-date').
+      exec((err, result)=>{
+        return callback(err, result)
+    })
+  },
   get(req, res, next){
     let query = {}
     chatCtrl.getMsg(query, (err, messages)=>{

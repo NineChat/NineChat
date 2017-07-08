@@ -25,6 +25,8 @@ const msgConstructor = (type, content) =>{
 }
 
 wss.on('connection', function connection(ws, req) {
+  console.log('body:', req.body)
+  console.log('params:', req.params)
   let id = Object.keys(connectList).length
   connectList[id] = {id: id, ws: ws}
   let content = 'connect_id: ' + id.toString()
@@ -33,10 +35,12 @@ wss.on('connection', function connection(ws, req) {
   // You might use location.query.access_token to authenticate or share sessions 
   // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312) 
 
-  chatCtrl.getMsg({}, (err, messages)=>{
+  chatCtrl.getLastTen((err, messages)=>{
     console.log('result', messages)
     sendToAll(JSON.stringify(messages))
   })
+  // http://mongoosejs.com/docs/queries.html
+  // Room.find({}, null, {sort: '-date'}, function(err, docs) { ... });
   const sendToAll = data => {
     Object.keys(connectList).forEach(id =>{
       connectList[id].ws.send(data)
@@ -44,9 +48,6 @@ wss.on('connection', function connection(ws, req) {
   }
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
-    // let msg = JSON.parse(data)
-    let modifiedMsg = 'msg from server: ' + data
-    // ws.send(msgConstructor("message", modifiedMsg))
     sendToAll(data)
     chatCtrl.addMsg(data)
   });
