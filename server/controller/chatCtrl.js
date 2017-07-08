@@ -4,18 +4,21 @@ const User = require('../model/users');
 
 const chatCtrl = {
   addMsg(data) {
-    let msgDoc
     try {
       msg = JSON.parse(data)
-      msgDoc = new Message({
-        src: msg.src,
-        dst: msg.dst,
-        message: msg.content
-      })
+      if ('src' in msg &&
+          'dst' in msg &&
+          'content' in msg){
+        msgDoc = new Message({
+          src: msg.src,
+          dst: msg.dst,
+          message: msg.content
+        })
+      } else {throw "msg data lacks key"}
     } catch (err) {
       msgDoc = new Message({
-        src: "message_not",
-        dst: "json",
+        src: "Garret",
+        dst: "message_not_json",
         message: data
       })
       console.log(err)
@@ -30,7 +33,7 @@ const chatCtrl = {
       return callback(err, result)
     })
   },
-  getLastTen(callback){
+  getLastTen(userid, callback){
     Message.
       find({}).
       limit(10).

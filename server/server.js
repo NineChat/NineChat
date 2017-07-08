@@ -25,17 +25,14 @@ const msgConstructor = (type, content) =>{
 }
 
 wss.on('connection', function connection(ws, req) {
-  console.log('body:', req.body)
-  console.log('params:', req.params)
+  console.log('req:', req.headers.userid)
   let id = Object.keys(connectList).length
+  let userid = req.headers.userid ? req.headers.userid : "Garret"
   connectList[id] = {id: id, ws: ws}
   let content = 'connect_id: ' + id.toString()
-  ws.send(msgConstructor("wsConfirmed", content))
-  const location = url.parse(req.url, true);
-  // You might use location.query.access_token to authenticate or share sessions 
-  // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312) 
-
-  chatCtrl.getLastTen((err, messages)=>{
+  // ws.send(msgConstructor("wsConfirmed", content))
+  console.log(msgConstructor("wsConfirmed", content))
+  chatCtrl.getLastTen(userid, (err, messages)=>{
     console.log('result', messages)
     sendToAll(JSON.stringify(messages))
   })
