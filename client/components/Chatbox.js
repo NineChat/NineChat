@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 function Chatbox(props){
-  let msgs = props.messages.map((message, i) =>{
+  const msgs = props.messages.map((message, i) =>{
     return (
       <div key = {message.id} className = "msgcontainer">
         <div className = "msgname">{message.src}:</div>

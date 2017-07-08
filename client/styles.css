@@ -1,3 +1,17 @@
+#main{
+  display: flex;
+}
+#users{
+  width: 200px;
+  border: 1px solid black;
+}
+
+#user-profile{
+  height: 200px;
+  border-bottom: 1px solid black;
+}
+
+
 #chatbox{
   height: 400px;
   width: 600px;
