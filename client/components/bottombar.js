@@ -4,9 +4,10 @@ function Bottombar(props){
 
   return (
     <div id ="bottombar">
-      <textarea id ="textbox" placeholder='message...'>
+      <textarea id ="textbox" value = {props.value} onChange = {(event)=>props.handleChange(event)} placeholder='message...'>
+          {props.value}
       </textarea>
-      <div id = "sendButton" onClick = {()=>{alert()}}>
+      <div id = "sendButton" onClick = {()=>{props.sendClick()}}>
         	{String.fromCharCode(10004)}
       </div>
     </div>
