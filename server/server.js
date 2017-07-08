@@ -26,20 +26,25 @@ const msgConstructor = (type, content) =>{
   return JSON.stringify({type: type, content: content})
 }
 
+const sendToAll = data => {
+  Object.keys(connectList).forEach(id =>{
+    connectList[id].ws.send(data)
+  })
+}
+const findConnections = username =>{
+  // for 
+  
+
+  // return ws 
+}
 wss.on('connection', function connection(ws, req) {
   console.log('req:', req.headers.userid)
   let id = Object.keys(connectList).length
   let userid = req.headers.userid ? req.headers.userid : "Garret"
   connectList[id] = {id: id, ws: ws}
-  let content = 'connect_id: ' + id.toString()
   chatCtrl.getLastTen(userid, (err, messages)=>{
-    sendToAll(JSON.stringify(messages))
+    ws.send(JSON.stringify(messages))
   })
-  const sendToAll = data => {
-    Object.keys(connectList).forEach(id =>{
-      connectList[id].ws.send(data)
-    })
-  }
   ws.on('message', function incoming(data) {
     console.log('received: %s', data);
     chatCtrl.addMsg(data, (err, savedMsg)=>{
